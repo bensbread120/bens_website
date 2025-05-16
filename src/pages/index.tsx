@@ -16,7 +16,7 @@ export default function Home() {
     <main className="min-h-screen bg-gray-100 text-gray-800 px-4 py-10">
       <div className="max-w-3xl mx-auto">
         <header className="mb-12 text-center">
-          <h1 className="text-4xl font-bold mb-2">Your Name</h1>
+          <h1 className="text-4xl font-bold mb-2">Ben Hatfield</h1>
           <p className="text-lg text-gray-600">Web Developer | Tech Enthusiast | Lifelong Learner</p>
         </header>
 
@@ -32,7 +32,7 @@ export default function Home() {
           <h2 className="text-2xl font-semibold mb-2">Links</h2>
           <ul className="space-y-2">
             <li>
-              <a href="https://github.com/yourusername" className="text-blue-600 hover:underline" target="_blank">
+              <a href="https://github.com/bensbread120" className="text-blue-600 hover:underline" target="_blank">
                 GitHub
               </a>
             </li>
@@ -42,7 +42,7 @@ export default function Home() {
               </a>
             </li>
             <li>
-              <a href="https://linkedin.com/in/yourname" className="text-blue-600 hover:underline" target="_blank">
+              <a href="https://www.linkedin.com/in/benjamin-hatfield-076b011aa/" className="text-blue-600 hover:underline" target="_blank">
                 LinkedIn
               </a>
             </li>
@@ -50,7 +50,7 @@ export default function Home() {
         </section>
 
         <footer className="mt-16 text-center text-sm text-gray-500">
-          &copy; {new Date().getFullYear()} Your Name
+          &copy; {new Date().getFullYear()} Ben Hatfield
         </footer>
       </div>
     </main>
