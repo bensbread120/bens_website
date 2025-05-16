@@ -7,21 +7,21 @@ import {
 } from "typeorm";
 
 @Entity()
-export class User {
+export class Project {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  firstName: string;
+  @Column({ length: 255 })
+  name: string;
 
-  @Column()
-  lastName: string;
+  @Column({ type: "text" })
+  description: string;
 
-  @Column({ unique: true })
-  email: string;
+  @Column({ length: 255 })
+  image: string;
 
-  @Column()
-  age: number;
+  @Column({ length: 255 })
+  link: string;
 
   @CreateDateColumn()
   createdAt: Date;
