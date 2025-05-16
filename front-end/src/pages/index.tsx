@@ -30,7 +30,7 @@ export default function Home() {
           alt="Ben Hatfield"
           width={250}
           height={250}
-          className="rounded-full border-4 border-white shadow-lg mb-6"
+          className="rounded-full border-6 border-black shadow-lg mb-6"
         />
         <h1 className="text-5xl font-bold mb-2">Ben Hatfield</h1>
         <p className="text-xl text-gray-200">
@@ -41,7 +41,7 @@ export default function Home() {
       </section>
 
       {/* White Content Panel */}
-      <section className="relative z-10 bg-white/90 rounded-3xl shadow-xl px-10 p-10 w-full max-w-4xl mx-auto mt-10 mb-0">
+      <section className="relative z-10 bg-white/90 rounded-3xl shadow-xl px-10 p-10 w-full max-w-4xl mx-auto mt-10 mb-0" style={{ boxShadow: '0 40px 40px rgba(0,0,0,0.65)' }}>
         <h2 className="text-2xl font-semibold mb-4">About Me</h2>
         <p className="text-gray-700 mb-6">
           I'm a web developer passionate about building clean and functional websites.

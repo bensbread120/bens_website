@@ -1,6 +1,6 @@
 const Footer = () => {
   return (
-    <footer className="mt-16 text-center text-sm text-gray-100">
+    <footer className="relative mt-16 mb-5 z-10 text-center text-sm text-white">
       &copy; {new Date().getFullYear()} Ben Hatfield
     </footer>
   )
