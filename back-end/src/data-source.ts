@@ -1,6 +1,7 @@
 import { DataSource } from "typeorm";
 import { BlogPost } from "./entity/BlogPost";
 import { Project } from "./entity/Project";
+import { User } from "./entity/User";
 import * as dotenv from 'dotenv';
 dotenv.config();
 
@@ -14,5 +15,5 @@ export const AppDataSource = new DataSource({
   database: process.env.DB_NAME,
   synchronize: true, // Auto creates tables (disable in production)
   logging: true,
-  entities: [BlogPost, Project],
+  entities: [BlogPost, Project, User],
 });

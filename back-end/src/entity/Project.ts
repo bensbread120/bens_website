@@ -17,8 +17,9 @@ export class Project {
   @Column({ type: "text" })
   description: string;
 
-  @Column({ length: 255 })
-  image: string;
+  // Store image as binary
+  @Column({ type: "longblob", nullable: true })
+  image: Buffer;
 
   @Column({ length: 255 })
   link: string;

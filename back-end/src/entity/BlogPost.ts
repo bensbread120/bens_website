@@ -20,8 +20,9 @@ export class BlogPost {
   @Column({ length: 500 })
   excerpt: string;
 
-  @Column({ length: 255 })
-  image: string;
+  // Store image as binary
+  @Column({ type: "longblob", nullable: true })
+  image: Buffer;
 
   @CreateDateColumn()
   createdAt: Date;

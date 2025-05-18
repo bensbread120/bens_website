@@ -5,114 +5,91 @@ import { BlogPost } from "../entity/BlogPost";
 export class BlogPostController {
   private blogPostRepository = AppDataSource.getRepository(BlogPost);
 
-  /**
-   * Retrieves all blogPosts from the database
-   * @param request - Express request object
-   * @param response - Express response object
-   * @returns JSON response containing an array of all blogPosts
-   */
   async all(request: Request, response: Response) {
     const blogPosts = await this.blogPostRepository.find();
 
-    return response.json(blogPosts);
+    const transformed = blogPosts.map(post => ({
+      ...post,
+      image: post.image?.toString("base64") || null,
+    }));
+
+    return response.json(transformed);
   }
 
-  /**
-   * Retrieves a single blogPost by their ID
-   * @param request - Express request object containing the blogPost ID in params
-   * @param response - Express response object
-   * @returns JSON response containing the blogPost if found, or 404 error if not found
-   */
   async one(request: Request, response: Response) {
     const id = parseInt(request.params.id);
-    const blogPost = await this.blogPostRepository.findOne({
-      where: { id },
-    });
+    const blogPost = await this.blogPostRepository.findOne({ where: { id } });
 
     if (!blogPost) {
       return response.status(404).json({ message: "blogPost not found" });
     }
-    return response.json(blogPost);
+
+    return response.json({
+      ...blogPost,
+      image: blogPost.image?.toString("base64") || null,
+    });
   }
 
-  /**
-   * Creates a new blogPost in the database
-   * @param request - Express request object containing blogPost details in body
-   * @param response - Express response object
-   * @returns JSON response containing the created blogPost or error message
-   */
   async save(request: Request, response: Response) {
-    const { title, content, excerpt, image } = request.body;
+    const { title, content, excerpt } = request.body;
+    const imageBuffer = (request as any).file?.buffer;
 
     const blogPost = Object.assign(new BlogPost(), {
       title,
       content,
       excerpt,
-      image,
+      image: imageBuffer,
     });
 
     try {
-      const savedblogPost = await this.blogPostRepository.save(blogPost);
-      return response.status(201).json(savedblogPost);
+      const saved = await this.blogPostRepository.save(blogPost);
+      return response.status(201).json({
+        ...saved,
+        image: saved.image?.toString("base64") || null,
+      });
     } catch (error) {
-      return response
-        .status(400)
-        .json({ message: "Error creating blogPost", error });
+      return response.status(400).json({ message: "Error creating blogPost", error });
     }
   }
 
-  /**
-   * Deletes a blogPost from the database by their ID
-   * @param request - Express request object containing the blogPost ID in params
-   * @param response - Express response object
-   * @returns JSON response with success message or 404 error if blogPost not found
-   */
-  async remove(request: Request, response: Response) {
-    const id = parseInt(request.params.id);
-    const blogPostToRemove = await this.blogPostRepository.findOne({
-      where: { id },
-    });
-
-    if (!blogPostToRemove) {
-      return response.status(404).json({ message: "blogPost not found" });
-    }
-
-    await this.blogPostRepository.remove(blogPostToRemove);
-    return response.json({ message: "blogPost removed successfully" });
-  }
-
-  /**
-   * Updates an existing blogPost's information
-   * @param request - Express request object containing blogPost ID in params and updated details in body
-   * @param response - Express response object
-   * @returns JSON response containing the updated blogPost or error message
-   */
   async update(request: Request, response: Response) {
     const id = parseInt(request.params.id);
-    const { title, content, excerpt, image } = request.body;
+    const { title, content, excerpt } = request.body;
+    const imageBuffer = (request as any).file?.buffer;
 
-    let blogPostToUpdate = await this.blogPostRepository.findOne({
-      where: { id },
-    });
+    let blogPost = await this.blogPostRepository.findOne({ where: { id } });
 
-    if (!blogPostToUpdate) {
+    if (!blogPost) {
       return response.status(404).json({ message: "blogPost not found" });
     }
 
-    blogPostToUpdate = Object.assign(blogPostToUpdate, {
+    blogPost = Object.assign(blogPost, {
       title,
       content,
       excerpt,
-      image,
+      image: imageBuffer ?? blogPost.image,
     });
 
     try {
-      const updatedblogPost = await this.blogPostRepository.save(blogPostToUpdate);
-      return response.json(updatedblogPost);
+      const updated = await this.blogPostRepository.save(blogPost);
+      return response.json({
+        ...updated,
+        image: updated.image?.toString("base64") || null,
+      });
     } catch (error) {
-      return response
-        .status(400)
-        .json({ message: "Error updating blogPost", error });
+      return response.status(400).json({ message: "Error updating blogPost", error });
     }
+  }
+
+  async remove(request: Request, response: Response) {
+    const id = parseInt(request.params.id);
+    const blogPost = await this.blogPostRepository.findOne({ where: { id } });
+
+    if (!blogPost) {
+      return response.status(404).json({ message: "blogPost not found" });
+    }
+
+    await this.blogPostRepository.remove(blogPost);
+    return response.json({ message: "blogPost removed successfully" });
   }
 }
