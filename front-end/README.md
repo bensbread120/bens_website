@@ -1,1 +1,0 @@
-Client side server for personal webpage 

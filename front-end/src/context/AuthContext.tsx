@@ -19,7 +19,7 @@ type AuthProviderProps = {
 
 export function AuthProvider({ children, initialUser = null }: AuthProviderProps) {
   const [user, setUser] = useState<User | null>(initialUser);
-  const [loading, setLoading] = useState(!initialUser); // avoid double fetching if SSR provided user
+  const [loading, setLoading] = useState(!initialUser); 
 
   useEffect(() => {
     if (!initialUser) {
