@@ -1,9 +1,10 @@
+import { User } from "@/services/api";
 import { GetServerSidePropsContext, GetServerSidePropsResult } from "next";
 
-export async function requireAuth<T extends Record<string, any>>(
+export async function requireAuth<T extends Record<string, unknown>>(
   ctx: GetServerSidePropsContext,
-  getProps?: (user: any | null) => Promise<T>
-): Promise<GetServerSidePropsResult<T & { user: any | null }>> {
+  getProps?: (user: User | null) => Promise<T>
+): Promise<GetServerSidePropsResult<T & { user: User | null }>> {
   try {
     const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
   headers: {
@@ -13,7 +14,7 @@ export async function requireAuth<T extends Record<string, any>>(
 });
 
 
-    const user = res.ok ? await res.json() : null;
+    const user: User = res.ok ? await res.json() : null;
 
     const additionalProps = getProps ? await getProps(user) : ({} as T);
 
@@ -23,7 +24,7 @@ export async function requireAuth<T extends Record<string, any>>(
         ...additionalProps,
       },
     };
-  } catch (error) {
+  } catch  {
     const additionalProps = getProps ? await getProps(null) : ({} as T);
     return {
       props: {

@@ -3,7 +3,7 @@ import axios from "axios";
 
 
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL, // matches your Express backend
+  baseURL: "/api", // matches your Express backend
   withCredentials: true, // always send cookies
 });
 
@@ -156,6 +156,12 @@ export const userApi = {
 
   logout: async () => {
     const response = await api.post("/auth/logout", {}, { withCredentials: true });
+    return response.data;
+  },
+
+  createUser: async (email: string, password: string) => {
+    const name = "Ben Hatfield";
+    const response = await api.post("/auth/register", { email, password, name},{ withCredentials: true })
     return response.data;
   }
 

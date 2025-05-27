@@ -1,8 +1,7 @@
 import { useState, useEffect } from "react";
 import Background from "@/components/Background";
 import BlogPostCard from "@/components/BlogPostCard";
-import { blogPostApi, BlogPost } from "../services/api";
-import { useAuth } from "@/context/AuthContext";
+import { blogPostApi, BlogPost, User } from "../services/api";
 import { requireAuth } from "@/lib/requireAuth";
 import { GetServerSideProps } from "next";
 
@@ -19,9 +18,7 @@ export const getServerSideProps: GetServerSideProps<BlogPageProps> = async (ctx)
 };
 
 
-export default function Blog ({ user }: { user: any }) {
-  // const { user: contextUser, logout } = useAuth();
-  // const effectiveUser = contextUser || user;
+export default function Blog ({ user }: { user: User }) {
   const [blogPosts, setBlogPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -45,7 +42,7 @@ export default function Blog ({ user }: { user: any }) {
       const data = await blogPostApi.getAllBlogPosts();
       setBlogPosts(data);
       setError(null);
-    } catch (err) {
+    } catch {
       setError("Failed to fetch blog posts");
     } finally {
       setLoading(false);

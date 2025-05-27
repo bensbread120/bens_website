@@ -6,6 +6,7 @@ type AuthContextType = {
   user: User | null;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
+  create: (email: string, password: string) => Promise<void>;
 };
 
 // Create context
@@ -40,8 +41,12 @@ export function AuthProvider({ children, initialUser = null }: AuthProviderProps
     setUser(null);
   };
 
+  const create = async (email: string, password: string) => {
+    await userApi.createUser(email, password);
+  }
+
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, create }}>
       {loading ? null : children}
     </AuthContext.Provider>
   );

@@ -1,7 +1,8 @@
 import { useRouter } from "next/router";
 import { useAuth } from "@/context/AuthContext";
+import { User } from "@/services/api";
 
-const Header = ({ user }: { user: any }) => {
+const Header = ({ user }: { user: User }) => {
   const router = useRouter();
   const { logout } = useAuth();
 
