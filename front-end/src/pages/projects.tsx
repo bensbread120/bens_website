@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import Background from "@/components/Background";
 import ProjectCard from "@/components/ProjectCard";
 import { projectApi, Project } from "../services/api";
-import { useAuth } from "@/context/AuthContext";
 import { requireAuth } from "@/lib/requireAuth";
 import { GetServerSideProps } from "next";
 
@@ -19,7 +18,6 @@ export const getServerSideProps: GetServerSideProps<ProjectsPageProps> = async (
 };
 
 export default function ProjectsPage({ user }: ProjectsPageProps) {
-  // const { user: contextUser } = useAuth();
 
   const [projects, setProjects] = useState<Project[]>([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +42,7 @@ export default function ProjectsPage({ user }: ProjectsPageProps) {
       const data = await projectApi.getAllProjects();
       setProjects(data);
       setError(null);
-    } catch (err) {
+    } catch {
       setError("Failed to fetch projects");
     } finally {
       setLoading(false);
@@ -105,7 +103,7 @@ export default function ProjectsPage({ user }: ProjectsPageProps) {
   return (
     <Background>
       <div className="max-w-7xl mx-auto px-4 py-20">
-        <h1 className="text-4xl font-bold text-white text-center mb-12">Project</h1>
+        <h1 className="text-4xl font-bold text-white text-center mb-12">Projects</h1>
 
         {/* Create Project Form */}
         {user && (

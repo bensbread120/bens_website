@@ -19,10 +19,19 @@ export default function SignIn() {
     try {
       await login(email, password); // Wait for login to complete
       // success will be handled in useEffect when `user` is updated
-    } catch (err) {
+    } catch {
       setError("Invalid email or password");
     }
   };
+  // commented out for production
+  // const createUser = async () => {
+  //   try {
+  //     await create(email, password); // Wait for login to complete
+  //     // success will be handled in useEffect when `user` is updated
+  //   } catch (err) {
+  //     setError(`Invalid email or password${err}`);
+  //   }
+  // }
 
   useEffect(() => {
     if (user) {
@@ -66,6 +75,7 @@ export default function SignIn() {
           <button type="submit" className="bg-blue-500 text-white px-4 py-2 rounded w-full">
             Sign In
           </button>
+          {/* <button className="bg-blue-500 text-white px-4 py-2 rounded w-full mt-1" onClick={createUser}>Create</button> */}
         </form>
       </div>
     </div>

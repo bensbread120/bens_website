@@ -6,13 +6,19 @@ import projectRoutes from "./routes/project.routes";
 import userRoutes from "./routes/user.router"
 import cors from "cors";
 import session from "express-session";
+import { hostname } from "os";
 const app = express();
 const PORT = process.env.PORT || 3001;
 
-app.use(cors({
-  origin: "http://localhost:3000", // or your frontend domain
-  credentials: true
-}));
+const allowedOrigins = ["http://localhost:3000", "https://benhatfield.com"];
+
+app.use(
+  cors({
+    origin: allowedOrigins,
+    credentials: true,
+  })
+);
+ 
 app.use(express.json());
 app.use("/api", blogPostRoutes);
 app.use("/api", projectRoutes);
@@ -31,11 +37,13 @@ app.use(session({
 
 app.use("/api", userRoutes);
 
+const PORT_PASSED = parseInt(process.env.PORT || "3001", 10);
+
 AppDataSource.initialize()
   .then(() => {
     console.log("Data Source has been initialized!");
-    app.listen(PORT, () => {
-      console.log(`Server is running on port ${PORT}`);
+    app.listen(PORT_PASSED, "127.0.0.1", () => {
+      console.log(`Server is running locally on http://127.0.0.1:${PORT_PASSED}`);
     });
   })
   .catch((error) =>
