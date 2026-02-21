@@ -29,7 +29,7 @@ export default function Home() {
         />
         <h1 className="text-5xl font-bold mb-2">Ben Hatfield</h1>
         <p className="text-xl text-gray-200">
-          Web Developer | Tech Enthusiast | Lifelong Learner
+          Web Developer | Tech Enthusiast | Lifelong Learner | Endurance Athlete
         </p>
         <p className="mt-8 animate-bounce text-3xl">↓</p>
 

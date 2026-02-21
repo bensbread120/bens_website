@@ -38,7 +38,6 @@ export class UserController {
       return res.status(401).json({ message: "Invalid credentials" });
     }
 
-    // Use session or JWT — here assuming session
     (req.session as any).userId = user.id;
 
     return res.json({ id: user.id, email: user.email, name: user.name });
@@ -68,7 +67,7 @@ export class UserController {
     const hashedPassword = await bcrypt.hash(password, salt);
 
     const user = Object.assign(new User(), {
-      email,
+      email, 
       password: hashedPassword,
       salt,
       name,
