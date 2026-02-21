@@ -33,5 +33,10 @@
     "@types/bcrypt": "^5.0.2",
     "@types/express-session": "^1.18.1",
     "@types/multer": "^1.4.12"
-  }
+  },
+  "overrides": {
+  "minimatch": "^10.2.1"
 }
+}
+
+
