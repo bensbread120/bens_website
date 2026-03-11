@@ -2,7 +2,6 @@ import { redirect } from "next/navigation"
 import { createPost } from "@/actions/blog"
 import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
-import Background from "@/src/components/Background"
 
 export default async function AdminPage() {
 

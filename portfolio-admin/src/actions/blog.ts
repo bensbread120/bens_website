@@ -10,9 +10,11 @@ export async function createPost(formData: FormData) {
   const imageFile = formData.get("image") as File
 
   let imageUrl: string | null = null
-  if (imageFile?.size) {
+
+  if (imageFile && imageFile.size > 0) {
+    // const { url } = await put('articles/blob.txt', 'Hello World!', { access: 'private' });
     const putResult = await put(imageFile.name, imageFile, { access: "public" })
-    imageUrl = putResult.url // Access the URL directly
+    imageUrl = putResult.url
   }
 
   await db.blogPost.create({ data: { title, content, excerpt, imageUrl } })
