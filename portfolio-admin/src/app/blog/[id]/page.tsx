@@ -18,7 +18,7 @@ export default async function BlogPostPage({ params }: Props) {
   }
 
   return (
-    <article className="max-w-3xl mx-auto px-6 py-16">
+    <article className="max-w-3xl mx-auto mt-10 px-6 py-16 bg-white rounded-xl">
       <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
 
       <p className="text-gray-400 mb-8">
