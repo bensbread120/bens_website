@@ -1,22 +1,35 @@
-"use client"
+"use client";
 
-import { useTransition } from "react"
-import { deletePost } from "@/actions/blog"
+import { useRef } from "react";
+import { toast } from "sonner";
+import { deletePost } from "@/actions/blog";
 
 export default function DeletePostButton({ id }: { id: string }) {
-  const [isPending, startTransition] = useTransition()
+  const formRef = useRef<HTMLFormElement>(null);
+
+  function confirmDelete() {
+    toast("Delete this post?", {
+      action: {
+        label: "Delete",
+        onClick: () => {
+          formRef.current?.requestSubmit();
+        },
+      },
+    });
+  }
 
   return (
-    <button
-      disabled={isPending}
-      onClick={() => {
-        if (confirm("Delete this post?")) {
-          startTransition(() => deletePost(id))
-        }
-      }}
-      className="text-red-500"
-    >
-      {isPending ? "Deleting..." : "Delete"}
-    </button>
-  )
+    <>
+      <form ref={formRef} action={deletePost}>
+        <input type="hidden" name="id" value={id} />
+      </form>
+
+      <button
+        onClick={confirmDelete}
+        className="text-red-500 hover:text-red-700"
+      >
+        Delete
+      </button>
+    </>
+  );
 }

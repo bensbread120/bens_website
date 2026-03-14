@@ -7,6 +7,12 @@ import { getServerSession } from "next-auth"
 import { authOptions } from "@/lib/auth"
 
 export async function createPost(formData: FormData) {
+  const session = await getServerSession(authOptions)
+
+  if (!session) {
+    throw new Error("Unauthorized")
+  }
+
   const title = formData.get("title") as string
   const content = formData.get("content") as string
   const excerpt = formData.get("excerpt") as string
@@ -21,6 +27,7 @@ export async function createPost(formData: FormData) {
   }
 
   await db.blogPost.create({ data: { title, content, excerpt, imageUrl } })
+  // Add success message here
 }
 
 export async function getPosts() {
@@ -33,17 +40,18 @@ export async function getPostById(id: string) {
   });
 }
 
-export async function deletePost(id: string) {
-  const session = await getServerSession(authOptions)
+export async function deletePost(formData: FormData) {
+  const session = await getServerSession(authOptions);
 
   if (!session) {
-    throw new Error("Unauthorized")
+    throw new Error("Unauthorized");
   }
 
+  const id = formData.get("id") as string;
+
   await db.blogPost.delete({
-    where: { id }
-  })
+    where: { id },
+  });
 
-  redirect("/blog")
+  redirect("/blog?deleted=1");
 }
-
