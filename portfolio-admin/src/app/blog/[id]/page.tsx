@@ -1,6 +1,10 @@
 import { notFound } from "next/navigation";
-import { getPostById } from "@/actions/blog";
+import { deletePost, getPostById } from "@/actions/blog";
 import Image from "next/image";
+import { authOptions } from "@/src/lib/auth";
+import { getServerSession } from "next-auth";
+import DeletePostButton from "@/components/DeletePostButton"
+
 
 type Props = {
   params: Promise<{
@@ -17,9 +21,15 @@ export default async function BlogPostPage({ params }: Props) {
     notFound();
   }
 
+  const session = await getServerSession(authOptions);
+
   return (
     <article className="max-w-3xl mx-auto mt-10 px-6 py-16 bg-white rounded-xl">
       <h1 className="text-4xl font-bold mb-4">{post.title}</h1>
+      {session && (
+        <DeletePostButton id={post.id} />
+      )}
+
 
       <p className="text-gray-400 mb-8">
         {new Intl.DateTimeFormat("en-AU", {

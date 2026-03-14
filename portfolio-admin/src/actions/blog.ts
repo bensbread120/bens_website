@@ -2,6 +2,9 @@
 
 import { db } from "@/lib/db"
 import { put } from "@vercel/blob"
+import { redirect } from "next/navigation"
+import { getServerSession } from "next-auth"
+import { authOptions } from "@/lib/auth"
 
 export async function createPost(formData: FormData) {
   const title = formData.get("title") as string
@@ -29,3 +32,18 @@ export async function getPostById(id: string) {
     where: { id },
   });
 }
+
+export async function deletePost(id: string) {
+  const session = await getServerSession(authOptions)
+
+  if (!session) {
+    throw new Error("Unauthorized")
+  }
+
+  await db.blogPost.delete({
+    where: { id }
+  })
+
+  redirect("/blog")
+}
+
