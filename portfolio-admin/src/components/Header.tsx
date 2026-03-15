@@ -10,6 +10,7 @@ export default async function Header() {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Blog", path: "/blog" },
+    { name: "Exercise", path: "/activities" }
   ];
 
   return (

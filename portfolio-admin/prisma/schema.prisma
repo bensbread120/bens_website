@@ -28,3 +28,23 @@ model Project {
   imageUrl    String?
   link        String?
 }
+
+model Activity {
+  id           String   @id @default(cuid())
+  stravaId     BigInt   @unique
+  name         String
+  type         String
+  distance     Float
+  movingTime   Int
+  elapsedTime  Int
+  startDate    DateTime
+  timezone     String?
+  averageSpeed Float?
+  maxSpeed     Float?
+  elevation    Float?
+
+  // store raw streams
+  streams      Json?
+
+  createdAt    DateTime @default(now())
+}
