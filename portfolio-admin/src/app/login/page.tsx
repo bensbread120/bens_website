@@ -15,7 +15,7 @@ export default function LoginPage() {
     await signIn("credentials", {
       email,
       password,
-      callbackUrl: "/admin"
+      callbackUrl: "/training"
     })
   }
 

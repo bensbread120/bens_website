@@ -10,12 +10,11 @@ export default async function Header() {
   const navItems = [
     { name: "Home", path: "/" },
     { name: "Blog", path: "/blog" },
-    { name: "Exercise", path: "/activities" }
   ];
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-white/10 backdrop-blur-md bg-black/30">
-      <div className="max-w-7xl mx-auto grid grid-cols-3 items-center px-6 py-4 text-gray-200">
+      <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-y-2 px-4 py-3 text-gray-200 sm:grid sm:grid-cols-3 sm:px-6 sm:py-4">
 
         {/* Left: Logo */}
         <div className="flex items-center">
@@ -31,14 +30,14 @@ export default async function Header() {
               priority
               className="transition-transform duration-300 hover:rotate-6"
             />
-            <span className="text-xl font-semibold tracking-tight">
+            <span className="text-lg font-semibold tracking-tight sm:text-xl">
               BenHatfield.com
             </span>
           </Link>
         </div>
 
         {/* Center: Navigation */}
-        <nav className="flex justify-center gap-8 text-lg">
+        <nav className="order-last flex w-full justify-center gap-6 text-base sm:order-none sm:w-auto sm:gap-8 sm:text-lg">
           {navItems.map((item) => (
             <Link
               key={item.path}
@@ -50,12 +49,20 @@ export default async function Header() {
           ))}
 
           {session && (
-            <Link
-              href="/admin"
-              className="relative hover:text-white transition-colors"
-            >
-              Admin
-            </Link>
+            <>
+              <Link
+                href="/training"
+                className="relative hover:text-white transition-colors"
+              >
+                Training
+              </Link>
+              <Link
+                href="/admin"
+                className="relative hover:text-white transition-colors"
+              >
+                Admin
+              </Link>
+            </>
           )}
         </nav>
 

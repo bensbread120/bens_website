@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql" 
+  provider = "postgresql"
 }
 
 model User {
@@ -34,17 +34,106 @@ model Activity {
   stravaId     BigInt   @unique
   name         String
   type         String
+  // Strava's finer-grained type (TrailRun, Run, Hike...); null on rows synced before it was captured
+  sportType    String?
   distance     Float
   movingTime   Int
   elapsedTime  Int
   startDate    DateTime
+  // Wall-clock start time in the athlete's timezone, stored as if it were UTC.
+  // Used for bucketing into days/weeks so a 6am Monday run never lands in Sunday.
+  startDateLocal DateTime?
   timezone     String?
   averageSpeed Float?
   maxSpeed     Float?
   elevation    Float?
+  averageHeartrate Float?
+  maxHeartrate     Float?
+  // Training load (TRIMP-equivalent units), computed at ingest
+  trainingLoad Float?
 
   // store raw streams
   streams      Json?
 
   createdAt    DateTime @default(now())
+  updatedAt    DateTime @default(now()) @updatedAt
+
+  @@index([startDate])
+}
+
+// Singleton (id = 1). Strava rotates refresh tokens, so they live here rather than in env.
+model StravaAuth {
+  id           Int      @id @default(1)
+  athleteId    BigInt?
+  accessToken  String
+  refreshToken String
+  expiresAt    DateTime
+  updatedAt    DateTime @updatedAt
+}
+
+// Singleton (id = 1)
+model AthleteProfile {
+  id               Int      @id @default(1)
+  maxHr            Int?
+  restingHr        Int?
+  // Banister TRIMP weighting: 1.92 (male) or 1.67 (female)
+  trimpFactor      Float    @default(1.92)
+  runDaysPerWeek   Int      @default(5)
+  // 0 = Monday ... 6 = Sunday
+  longRunDay       Int      @default(5)
+  backToBack       Boolean  @default(true)
+  maxWeeklyHours   Float?
+  // IANA zone, e.g. "Australia/Melbourne". Null = infer from latest activity.
+  timezone         String?
+  // Free text (injuries, preferences) passed to the optional AI coach
+  coachNotes       String?
+  updatedAt        DateTime @default(now()) @updatedAt
+}
+
+model RaceEvent {
+  id             String   @id @default(cuid())
+  name           String
+  date           DateTime @db.Date
+  distanceKm     Float
+  elevationGainM Float?
+  // "A" = goal race (full taper), "B" = tune-up (mini taper), "C" = training race
+  priority       String   @default("A")
+  notes          String?
+  createdAt      DateTime @default(now())
+
+  @@index([date])
+}
+
+model PlanWeek {
+  id               String   @id @default(cuid())
+  // Monday of the week (athlete-local date)
+  weekStart        DateTime @unique @db.Date
+  phase            String
+  targetHours      Float
+  targetDistanceKm Float
+  targetVertM      Float
+  longRunMinutes   Int
+  isDownWeek       Boolean  @default(false)
+  targetRaceId     String?
+  // JSON array of strings explaining the rule-based decisions
+  rationale        Json
+  aiNotes          String?
+  aiNotesAt        DateTime?
+  generatedAt      DateTime @default(now())
+  workouts         PlannedWorkout[]
+}
+
+model PlannedWorkout {
+  id              String   @id @default(cuid())
+  planWeekId      String
+  planWeek        PlanWeek @relation(fields: [planWeekId], references: [id], onDelete: Cascade)
+  date            DateTime @db.Date
+  kind            String
+  title           String
+  description     String
+  durationMinutes Int
+  distanceKm      Float?
+  vertM           Float?
+
+  @@index([planWeekId])
 }

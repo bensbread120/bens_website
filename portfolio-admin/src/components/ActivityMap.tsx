@@ -5,7 +5,7 @@ import mapboxgl from "mapbox-gl"
 
 mapboxgl.accessToken = process.env.NEXT_PUBLIC_MAPBOX_TOKEN!;
 
-export default function ActivityMap({ geojson }: { geojson: any }) {
+export default function ActivityMap({ geojson }: { geojson: GeoJSON.Feature<GeoJSON.LineString> | null }) {
   const mapRef = useRef<HTMLDivElement | null>(null)
   
 
@@ -15,7 +15,7 @@ export default function ActivityMap({ geojson }: { geojson: any }) {
     const map = new mapboxgl.Map({
       container: mapRef.current,
       style: "mapbox://styles/mapbox/streets-v11",
-      center: geojson.geometry.coordinates[0],
+      center: geojson.geometry.coordinates[0] as [number, number],
       zoom: 14,
     })
 
@@ -37,11 +37,11 @@ export default function ActivityMap({ geojson }: { geojson: any }) {
 
       // Auto-fit bounds
       const bounds = geojson.geometry.coordinates.reduce(
-        (b: mapboxgl.LngLatBounds, coord: [number, number]) =>
-          b.extend(coord),
+        (b: mapboxgl.LngLatBounds, coord) =>
+          b.extend(coord as [number, number]),
         new mapboxgl.LngLatBounds(
-          geojson.geometry.coordinates[0],
-          geojson.geometry.coordinates[0]
+          geojson.geometry.coordinates[0] as [number, number],
+          geojson.geometry.coordinates[0] as [number, number]
         )
       )
 
