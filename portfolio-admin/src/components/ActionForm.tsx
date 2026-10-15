@@ -2,7 +2,7 @@
 
 import { useActionState, useEffect } from "react"
 import { toast } from "sonner"
-import type { ActionResult } from "@/actions/training"
+import type { ActionResult } from "@/lib/action"
 
 type Props = {
   action: (state: ActionResult, formData: FormData) => Promise<ActionResult>

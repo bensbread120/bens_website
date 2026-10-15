@@ -57,6 +57,12 @@ export default async function Header() {
                 Training
               </Link>
               <Link
+                href="/meals"
+                className="relative hover:text-white transition-colors"
+              >
+                Meals
+              </Link>
+              <Link
                 href="/admin"
                 className="relative hover:text-white transition-colors"
               >

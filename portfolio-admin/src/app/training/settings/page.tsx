@@ -1,6 +1,6 @@
 import { importHistory, saveProfile, syncNow } from "@/actions/training"
 import ActionForm from "@/components/ActionForm"
-import { Card } from "@/components/training/Card"
+import { Card } from "@/components/Card"
 import { coachEnabled } from "@/lib/coach"
 import { db } from "@/lib/db"
 import { requireAdminPage } from "@/lib/session"

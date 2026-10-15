@@ -137,3 +137,97 @@ model PlannedWorkout {
 
   @@index([planWeekId])
 }
+
+// ---- Meal planning ----
+
+// Anything that goes on a shopping list: recipe ingredients and household items alike
+model GroceryItem {
+  id              String   @id @default(cuid())
+  name            String
+  // Lowercased, whitespace-collapsed name; how "Ground cumin" in two recipes becomes one line
+  nameKey         String   @unique
+  category        String   @default("Other")
+  // "weekly" = on every list, "occasional" = suggested with its last purchase date
+  regular         String?
+  regularQuantity String?
+  // Usually in stock (salt, oil): listed under "check the pantry"
+  pantry          Boolean  @default(false)
+  lastPurchasedAt DateTime?
+  createdAt       DateTime @default(now())
+  recipeLines     RecipeIngredient[]
+  listItems       ShoppingListItem[]
+}
+
+// One recipe = one night: dinner for two plus lunch the next day
+model Recipe {
+  id          String   @id @default(cuid())
+  name        String
+  notes       String?
+  // Archived recipes stay on past weeks but aren't picked any more
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
+  ingredients RecipeIngredient[]
+  nights      MealNight[]
+}
+
+model RecipeIngredient {
+  id            String      @id @default(cuid())
+  recipeId      String
+  recipe        Recipe      @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  groceryItemId String
+  groceryItem   GroceryItem @relation(fields: [groceryItemId], references: [id])
+  quantity      Float?
+  // One of the units in src/lib/meals/units.ts ("" = each)
+  unit          String      @default("")
+  note          String?
+  position      Int         @default(0)
+
+  @@index([recipeId])
+  @@index([groceryItemId])
+}
+
+model MealWeek {
+  id          String             @id @default(cuid())
+  // Monday of the week
+  weekStart   DateTime           @unique @db.Date
+  confirmedAt DateTime?
+  nights      MealNight[]
+  listItems   ShoppingListItem[]
+}
+
+model MealNight {
+  id         String   @id @default(cuid())
+  mealWeekId String
+  mealWeek   MealWeek @relation(fields: [mealWeekId], references: [id], onDelete: Cascade)
+  date       DateTime @db.Date
+  // "recipe" or "out"
+  kind       String
+  recipeId   String?
+  recipe     Recipe?  @relation(fields: [recipeId], references: [id])
+  note       String?
+
+  @@unique([mealWeekId, date])
+  @@index([recipeId])
+}
+
+// Snapshot of the list when a week is confirmed, so it doesn't shift as recipes are edited
+model ShoppingListItem {
+  id                      String       @id @default(cuid())
+  mealWeekId              String
+  mealWeek                MealWeek     @relation(fields: [mealWeekId], references: [id], onDelete: Cascade)
+  groceryItemId           String?
+  groceryItem             GroceryItem? @relation(fields: [groceryItemId], references: [id], onDelete: SetNull)
+  name                    String
+  quantity                String
+  category                String
+  // "recipe", "regular" or "extra" (added by hand)
+  source                  String
+  usedIn                  String[]
+  pantry                  Boolean      @default(false)
+  checkedAt               DateTime?
+  // Restored to the item if the tick is undone
+  previousLastPurchasedAt DateTime?
+
+  @@index([mealWeekId])
+}

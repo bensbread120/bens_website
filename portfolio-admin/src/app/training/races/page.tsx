@@ -1,6 +1,6 @@
 import { deleteRace, saveRace } from "@/actions/training"
 import ActionForm from "@/components/ActionForm"
-import { Card } from "@/components/training/Card"
+import { Card } from "@/components/Card"
 import { db } from "@/lib/db"
 import { requireAdminPage } from "@/lib/session"
 import { daysBetween } from "@/lib/training/dates"

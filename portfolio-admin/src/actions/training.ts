@@ -1,27 +1,12 @@
 "use server"
 
-import { revalidatePath } from "next/cache"
 import { z } from "zod"
 import { db } from "@/lib/db"
-import { requireAdmin } from "@/lib/session"
+import { runAction, type ActionResult } from "@/lib/action"
 import { writeCoachNotes } from "@/lib/coach"
 import { importStravaHistory, recomputeTrainingLoads, syncStravaActivities } from "@/lib/stravaSync"
 import { fromISODate } from "@/lib/training/dates"
 import { ensurePlans, generatePlan, regenerateUpcomingPlans } from "@/lib/training/service"
-
-export type ActionResult = { ok: boolean; message: string } | null
-
-async function run(action: () => Promise<string>): Promise<ActionResult> {
-  try {
-    await requireAdmin()
-    const message = await action()
-    revalidatePath("/training", "layout")
-    return { ok: true, message }
-  } catch (error) {
-    console.error(error)
-    return { ok: false, message: error instanceof Error ? error.message : "Something went wrong" }
-  }
-}
 
 const optionalNumber = z.preprocess((v) => (v === "" || v === null ? null : v), z.coerce.number().nullable())
 const isoDate = z.string().regex(/^\d{4}-\d{2}-\d{2}$/, "Enter a date")
@@ -36,7 +21,7 @@ const raceSchema = z.object({
 })
 
 export async function saveRace(_: ActionResult, formData: FormData): Promise<ActionResult> {
-  return run(async () => {
+  return runAction("/training", async () => {
     const parsed = raceSchema.safeParse(Object.fromEntries(formData))
     if (!parsed.success) throw new Error(parsed.error.issues[0].message)
     const { date, ...rest } = parsed.data
@@ -51,7 +36,7 @@ export async function saveRace(_: ActionResult, formData: FormData): Promise<Act
 }
 
 export async function deleteRace(_: ActionResult, formData: FormData): Promise<ActionResult> {
-  return run(async () => {
+  return runAction("/training", async () => {
     await db.raceEvent.delete({ where: { id: String(formData.get("id")) } })
     await regenerateUpcomingPlans()
     return "Race removed, plan regenerated"
@@ -83,7 +68,7 @@ const profileSchema = z.object({
 })
 
 export async function saveProfile(_: ActionResult, formData: FormData): Promise<ActionResult> {
-  return run(async () => {
+  return runAction("/training", async () => {
     const parsed = profileSchema.safeParse({ ...Object.fromEntries(formData), backToBack: formData.get("backToBack") })
     if (!parsed.success) throw new Error(parsed.error.issues[0].message)
 
@@ -101,7 +86,7 @@ export async function saveProfile(_: ActionResult, formData: FormData): Promise<
 }
 
 export async function syncNow(): Promise<ActionResult> {
-  return run(async () => {
+  return runAction("/training", async () => {
     const { checked, created } = await syncStravaActivities()
     await ensurePlans()
     return `Checked ${checked} recent activities, ${created} new`
@@ -109,7 +94,7 @@ export async function syncNow(): Promise<ActionResult> {
 }
 
 export async function importHistory(_: ActionResult, formData: FormData): Promise<ActionResult> {
-  return run(async () => {
+  return runAction("/training", async () => {
     const months = z.coerce.number().int().min(1).max(36).parse(formData.get("months"))
     const { created, updated } = await importStravaHistory(months)
     await ensurePlans()
@@ -118,14 +103,14 @@ export async function importHistory(_: ActionResult, formData: FormData): Promis
 }
 
 export async function regeneratePlan(_: ActionResult, formData: FormData): Promise<ActionResult> {
-  return run(async () => {
+  return runAction("/training", async () => {
     await generatePlan(isoDate.parse(formData.get("weekStart")))
     return "Plan regenerated"
   })
 }
 
 export async function generateCoachNotes(_: ActionResult, formData: FormData): Promise<ActionResult> {
-  return run(async () => {
+  return runAction("/training", async () => {
     await writeCoachNotes(String(formData.get("planWeekId")))
     return "Coach notes updated"
   })

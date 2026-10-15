@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation"
 import { db } from "@/lib/db"
 import ActivityMap from "@/components/ActivityMap"
-import { Card } from "@/components/training/Card"
+import { Card } from "@/components/Card"
 import { requireAdminPage } from "@/lib/session"
 import { activityLocalDate } from "@/lib/training/dates"
 import { fmtDuration, fmtKm, fmtVert, longDate } from "@/lib/training/format"

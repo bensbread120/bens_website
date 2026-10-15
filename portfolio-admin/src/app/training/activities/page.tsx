@@ -1,5 +1,5 @@
 import Link from "next/link"
-import { Card } from "@/components/training/Card"
+import { Card } from "@/components/Card"
 import { requireAdminPage } from "@/lib/session"
 import { fmtDuration, fmtKm, fmtVert, shortDate } from "@/lib/training/format"
 import { loadTrainingContext } from "@/lib/training/service"

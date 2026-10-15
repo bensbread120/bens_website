@@ -3,21 +3,16 @@
 import Link from "next/link"
 import { usePathname } from "next/navigation"
 
-const ITEMS = [
-  { name: "Dashboard", path: "/training" },
-  { name: "Plan", path: "/training/plan" },
-  { name: "Races", path: "/training/races" },
-  { name: "Activities", path: "/training/activities" },
-  { name: "Settings", path: "/training/settings" },
-]
+type Item = { name: string; path: string }
 
-export default function TrainingNav() {
+// Pill navigation for a private section; the first item is the section root
+export default function SectionNav({ items }: { items: Item[] }) {
   const pathname = usePathname()
 
   return (
     <nav className="mb-8 flex flex-wrap gap-2">
-      {ITEMS.map((item) => {
-        const active = item.path === "/training" ? pathname === item.path : pathname.startsWith(item.path)
+      {items.map((item, i) => {
+        const active = i === 0 ? pathname === item.path : pathname.startsWith(item.path)
         return (
           <Link
             key={item.path}
